@@ -1,4 +1,5 @@
 const main = async () => {
+    const [owner, randomPerson] = await hre.ethers.getSigners();
     // ovo upravo kompajlira nas ugovor i generise potrebne fajlove koji nam omogucavaju da radimo sa ugovor u folder artifact
     const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
 
@@ -10,6 +11,23 @@ const main = async () => {
     await waveContract.deployed();
     // nakon sto se diploja kao response cemo da dobijemo adresu na koju se diploja ugovor.
     console.log("Contract deployed to:", waveContract.address);
+    
+    // sa ovim mozemo da vidimo ko je glavni za diplojanje ugovora 
+    console.log("Contract deployed by:", owner.address);
+    
+    let waveCount;
+    waveCount = await waveContract.getTotalWaves();
+    let waveTxn = await waveContract.wave();
+     await waveTxn.wait();
+
+    waveCount = await waveContract.getTotalWaves();
+
+
+    //kada neka random osoba nam posalje wave
+    waveTxn = await waveContract.connect(randomPerson).wave();
+    await waveTxn.wait();
+  
+    waveCount = await waveContract.getTotalWaves();
   };
   
   const runMain = async () => {
